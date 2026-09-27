@@ -42,7 +42,7 @@
 <body>
   <div class="app">
     <header class="topbar">
-      <div class="brand"><span class="seal">喵</span><div><strong>喵喵江湖志</strong><small>喵来客栈 · 第一章</small></div></div>
+      <div class="brand"><span class="seal">喵</span><div><strong>喵喵江湖志</strong><small id="brand-chapter">喵来客栈 · 第一章</small></div></div>
       <div class="wallet"><span>🪙 <b id="coins">0</b></span><span>⚡ <b id="energy">60</b><small>/60</small></span></div>
     </header>
     <main>
@@ -66,7 +66,7 @@
         <div class="card"><span class="eyebrow">江湖来信</span><h2 id="story-prompt-title">暂无新线索</h2><p id="story-prompt-description"></p><button id="read-story" class="primary" hidden>阅读剧情</button></div>
       </section>
       <section class="panel" id="people-panel" aria-label="江湖人物"><div class="section-intro"><span class="eyebrow">江湖群像</span><h1>故人新识</h1><p>完成专属委托，听他们讲自己的故事。</p></div><div id="people" class="people"></div></section>
-      <section class="panel" id="journal-panel" aria-label="江湖手札"><div class="section-intro"><span class="eyebrow">客栈手札</span><h1 id="journal-title">一封送错的信</h1><p>完成委托，解锁每一幕的画面与故事。</p></div><section class="chapter-progress" aria-label="主线进度"><strong id="journal-goal"></strong><p id="journal-requirement"></p><div class="progress-track"><span id="journal-fill"></span></div><small id="journal-status"></small></section><article id="scene-viewer" class="scene-viewer" hidden><div class="scene-art"><img id="scene-image" alt="剧情场景" loading="lazy"><span id="scene-mark"></span></div><div class="scene-copy"><h2 id="scene-title"></h2><p id="scene-text"></p><div id="scene-choices"></div><button id="close-scene" class="secondary">返回手札</button></div></article><div id="journal"></div><div class="card settings"><h2>设置</h2><button id="reset" class="secondary danger">重新开局</button><small>进度只保存在当前浏览器。清除网站数据也会删除存档。</small></div></section>
+      <section class="panel" id="journal-panel" aria-label="江湖手札"><div class="section-intro"><span class="eyebrow">客栈手札</span><h1 id="journal-title">一封送错的信</h1><p id="journal-subtitle">完成委托，解锁每一幕的画面与故事。</p></div><section class="chapter-progress" aria-label="主线进度"><strong id="journal-goal"></strong><p id="journal-requirement"></p><div class="progress-track"><span id="journal-fill"></span></div><small id="journal-status"></small></section><article id="scene-viewer" class="scene-viewer" hidden><div class="scene-art"><img id="scene-image" alt="剧情场景" loading="lazy"><span id="scene-mark"></span></div><div class="scene-copy"><h2 id="scene-title"></h2><p id="scene-text"></p><div id="scene-choices"></div><button id="close-scene" class="secondary">返回手札</button></div></article><div id="journal"></div><div class="card settings"><h2>设置</h2><button id="reset" class="secondary danger">重新开局</button><small>进度只保存在当前浏览器。清除网站数据也会删除存档。</small></div></section>
     </main>
     <nav class="tabs" aria-label="游戏导航"><button data-tab="board" class="active"><span>▦</span>合成</button><button data-tab="inn"><span>⌂</span>客栈</button><button data-tab="people"><span>♡</span>人物</button><button data-tab="journal"><span>☰</span>手札</button></nav>
   </div>
@@ -158,11 +158,11 @@
   function chapterHint(index){return ['阅读开场故事','完成六六的专属委托','完成杏仁的专属委托','完成宝妹的专属委托并作出选择','完成6个委托并读完第一章'][index];}
   function renderChapterProgress(){
     const done=totalDone(state),scenes=Math.min(4,state.storyRead),chapterTwo=state.storyRead>=5,ready=state.storyRead>=4&&done>=6;
-    const remaining=state.storyRead<4?state.specialDone.liuliu<1?'先完成六六的专属委托，找出第一封信':state.specialDone.xingren<1?'下一步：完成杏仁的专属委托':state.specialDone.baomei<1?'下一步：完成宝妹的专属委托':'阅读第一章待解锁剧情并选择信的去向':done<6?`再完成${6-done}个委托，解锁第二章序幕`:'第二章序幕已解锁，前往手札阅读';
+    const remaining=nextScene()?`新剧情《${nextScene().title}》已解锁，前往手札阅读`:state.storyRead<4?state.specialDone.liuliu<1?'先完成六六的专属委托，找出第一封信':state.specialDone.xingren<1?'下一步：完成杏仁的专属委托':state.specialDone.baomei<1?'下一步：完成宝妹的专属委托':'阅读第一章待解锁剧情并选择信的去向':done<6?`再完成${6-done}个委托，解锁第二章序幕`:'第二章序幕已解锁，前往手札阅读';
     const title=chapterTwo?'第二章 · 花印山路':ready?'第二章 · 序幕可读':'目标：解锁第二章 · 花印山路';
     for(const prefix of ['chapter','journal']){$(prefix+'-goal').textContent=title;$(prefix+'-requirement').textContent=`委托 ${done}/6 · 第一章剧情 ${scenes}/4 幕（两项均需完成）`;$(prefix+'-fill').style.width=Math.min(100,done/6*100)+'%';$(prefix+'-status').textContent=chapterTwo?'第二章序幕已收录，更多故事待续':remaining;}
     $('chapter-bar').setAttribute('aria-valuenow',String(Math.min(6,done)));
-    $('chapter-mark').textContent=chapterTwo?'第二章':'第一章';$('chapter-name').textContent=chapterTwo?'花印山路':'一封送错的信';$('journal-title').textContent=chapterTwo?'花印山路':'一封送错的信';
+    $('chapter-mark').textContent=chapterTwo?'第二章':'第一章';$('brand-chapter').textContent=chapterTwo?'喵来客栈 · 第二章':'喵来客栈 · 第一章';$('chapter-name').textContent=chapterTwo?'花印山路':'一封送错的信';$('journal-title').textContent=chapterTwo?'花印山路':'一封送错的信';$('journal-subtitle').textContent=chapterTwo?'第二章序幕已开启，线索收录在手札中。':'完成委托，解锁每一幕的画面与故事。';
   }
   function nextScene(){return SCENES[state.storyRead]&&SCENES[state.storyRead].need(state)?SCENES[state.storyRead]:null;}
   function openStory(title,text){$('dialog-content').replaceChildren();const heading=document.createElement('h2');heading.textContent=title;const body=document.createElement('p');body.style.whiteSpace='pre-line';body.textContent=text;$('dialog-content').append(heading,body);$('dialog').showModal();}
@@ -173,7 +173,7 @@
     $('story-prompt-title').textContent=prompt?prompt.title:state.storyRead>=5?'第二章序幕已读':state.storyRead===4?'下一章的线索':'暂无新线索';
     $('story-prompt-description').textContent=prompt?'新画面已经解锁，前往手札阅读。':state.storyRead>=5?'花印的来历将在后续故事中揭晓。':state.storyRead===4?`累计完成 ${done}/6 个委托，解锁第二章序幕。`:'完成角色专属委托，新的剧情将在这里出现。';
     $('read-story').hidden=!prompt;$('chapter-hint').textContent=prompt?'有一段故事待阅读':state.storyRead>=5?'第二章序幕已读':state.storyRead===4?`第二章委托进度 ${done}/6`:'完成专属委托，发现新线索';
-    const journal=$('journal');journal.replaceChildren();SCENES.forEach((scene,i)=>{const unlocked=i<state.storyRead,el=document.createElement('div');el.className='story-entry'+(unlocked?'':' locked');const h=document.createElement('h2');h.textContent=unlocked?scene.title:i===4?'第二章 · 花印山路':'未解锁的故事';const p=document.createElement('p');p.textContent=unlocked?'已收录在客栈手札':chapterHint(i);if(unlocked){const image=document.createElement('img');image.src=SCENE_IMAGES[i];image.alt='';image.loading='lazy';el.append(image);}el.append(h,p);if(unlocked){const button=document.createElement('button');button.textContent='重看画面与故事 ›';button.onclick=()=>presentScene(i);el.append(button);}journal.append(el);});
+    const journal=$('journal');journal.replaceChildren();SCENES.forEach((scene,i)=>{const unlocked=i<state.storyRead,pending=i===state.storyRead&&!!prompt,el=document.createElement('div');el.className='story-entry'+(unlocked||pending?'':' locked');const h=document.createElement('h2');h.textContent=unlocked||pending?scene.title:i===4?'第二章 · 花印山路':'未解锁的故事';const p=document.createElement('p');p.textContent=unlocked?'已收录在客栈手札':pending?'新剧情已解锁 · 点击上方按钮阅读':chapterHint(i);if(unlocked){const image=document.createElement('img');image.src=SCENE_IMAGES[i];image.alt='';image.loading='lazy';el.append(image);}el.append(h,p);if(unlocked){const button=document.createElement('button');button.textContent='重看画面与故事 ›';button.onclick=()=>presentScene(i);el.append(button);}journal.append(el);});
     if(prompt){const btn=document.createElement('button');btn.className='primary';btn.textContent='阅读新剧情 · '+prompt.title;btn.onclick=readScene;journal.prepend(btn);}
   }
   function renderInn(){const descriptions=['灶台和茶炉已点起火，客栈正等着第一批江湖来客。','厨房添了新器具，生成物品时偶尔会得到二级材料。','门前灯火更亮了，江湖人愿意在这里多坐一会儿。'];$('inn-name').textContent=['简陋客栈 · 1级','热闹客栈 · 2级','江湖客栈 · 3级'][state.inn-1];$('inn-description').textContent=descriptions[state.inn-1];const price=state.inn===1?60:120;const btn=$('upgrade');btn.textContent=state.inn===3?'已达到最高等级':`升级客栈 · 🪙 ${price}`;btn.disabled=state.inn===3||state.coins<price;}
