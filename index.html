@@ -40,6 +40,9 @@
 .chapter-entry{display:block;width:100%;border:0;border-radius:9px;background:#a97942;color:#fff9e9;font-weight:700;padding:11px;margin-top:10px}
 .chapter-entry[hidden]{display:none}
 .order.story-order .order-visitor img{background:#e4dbc7}
+
+.quest-entry{display:block;width:100%;border:1px solid #a97942;border-radius:9px;background:#fff7e7;color:#76532d;font-weight:700;padding:11px;margin-top:10px}
+.quest-entry[hidden]{display:none}
 </style>
 
 </head>
@@ -53,7 +56,7 @@
       <section class="panel active" id="board-panel" aria-label="合成棋盘">
         <div id="tutorial-guide" class="tutorial-guide" role="status" aria-live="polite" hidden><small id="guide-progress"></small><strong id="guide-title"></strong><p id="guide-text"></p><div id="guide-dots" class="guide-dots"></div></div>
         <div class="chapter-banner"><span class="chapter-mark" id="chapter-mark">第一章</span><div><strong id="chapter-name">一封送错的信</strong><small id="chapter-hint">客栈开张，江湖来客</small></div><button class="text-button" id="story-shortcut">查看线索 ›</button></div>
-        <section class="chapter-progress" aria-label="主线目标"><strong id="chapter-goal"></strong><p id="chapter-requirement"></p><div class="progress-track" role="progressbar" aria-label="第二章委托进度" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="chapter-bar"><span id="chapter-fill"></span></div><small id="chapter-status"></small><button id="chapter-entry" class="chapter-entry" type="button" hidden>进入第二章</button></section>
+        <section class="chapter-progress" aria-label="主线目标"><strong id="chapter-goal"></strong><p id="chapter-requirement"></p><div class="progress-track" role="progressbar" aria-label="第二章委托进度" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="chapter-bar"><span id="chapter-fill"></span></div><small id="chapter-status"></small><button id="chapter-entry" class="chapter-entry" type="button" hidden>进入第二章</button><button id="quest-entry" class="quest-entry" type="button" hidden>接取无名侠客委托</button></section>
         <section class="commission" aria-label="当前委托">
           <div class="commission-heading"><h2>📜 来客委托</h2><span>接任务 → 合成 → 交付</span></div>
           <div id="active-order"></div>
@@ -70,7 +73,7 @@
         <div class="card"><span class="eyebrow">江湖来信</span><h2 id="story-prompt-title">暂无新线索</h2><p id="story-prompt-description"></p><button id="read-story" class="primary" hidden>阅读剧情</button></div>
       </section>
       <section class="panel" id="people-panel" aria-label="江湖人物"><div class="section-intro"><span class="eyebrow">江湖群像</span><h1>故人新识</h1><p>完成专属委托，听他们讲自己的故事。</p></div><div id="people" class="people"></div></section>
-      <section class="panel" id="journal-panel" aria-label="江湖手札"><div class="section-intro"><span class="eyebrow">客栈手札</span><h1 id="journal-title">一封送错的信</h1><p id="journal-subtitle">完成委托，解锁每一幕的画面与故事。</p></div><section class="chapter-progress" aria-label="主线进度"><strong id="journal-goal"></strong><p id="journal-requirement"></p><div class="progress-track"><span id="journal-fill"></span></div><small id="journal-status"></small></section><article id="scene-viewer" class="scene-viewer" hidden><div class="scene-art"><img id="scene-image" alt="剧情场景" loading="lazy"><span id="scene-mark"></span></div><div class="scene-copy"><h2 id="scene-title"></h2><p id="scene-text"></p><div id="scene-choices"></div><button id="close-scene" class="secondary">返回手札</button></div></article><div id="journal"></div><div class="card settings"><h2>设置</h2><button id="reset" class="secondary danger">重新开局</button><small>进度只保存在当前浏览器。清除网站数据也会删除存档。</small></div></section>
+      <section class="panel" id="journal-panel" aria-label="江湖手札"><div class="section-intro"><span class="eyebrow">客栈手札</span><h1 id="journal-title">一封送错的信</h1><p id="journal-subtitle">完成委托，解锁每一幕的画面与故事。</p></div><section class="chapter-progress" aria-label="主线进度"><strong id="journal-goal"></strong><p id="journal-requirement"></p><div class="progress-track"><span id="journal-fill"></span></div><small id="journal-status"></small><button id="journal-quest-entry" class="quest-entry" type="button" hidden>接取无名侠客委托</button></section><article id="scene-viewer" class="scene-viewer" hidden><div class="scene-art"><img id="scene-image" alt="剧情场景" loading="lazy"><span id="scene-mark"></span></div><div class="scene-copy"><h2 id="scene-title"></h2><p id="scene-text"></p><div id="scene-choices"></div><button id="close-scene" class="secondary">返回手札</button></div></article><div id="journal"></div><div class="card settings"><h2>设置</h2><button id="reset" class="secondary danger">重新开局</button><small>进度只保存在当前浏览器。清除网站数据也会删除存档。</small></div></section>
     </main>
     <nav class="tabs" aria-label="游戏导航"><button data-tab="board" class="active"><span>▦</span>合成</button><button data-tab="inn"><span>⌂</span>客栈</button><button data-tab="people"><span>♡</span>人物</button><button data-tab="journal"><span>☰</span>手札</button></nav>
   </div>
@@ -149,7 +152,7 @@
     return ({caizai:`${state.normalDone===0?'财仔刚来到客栈':'财仔又来到客栈'}，想尝尝${item}。他会把味道和沿路见闻都写进食榜。`,baomei:`宝妹正招待风尘仆仆的茶客，托你备好${item}，让他们歇一歇。`,liuliu:`六六要往山路去，想带上一份${item}。她说回来会告诉你新发现。`,traveler:order.variant?`过路客阿灯的灯笼快熄了。他想换一份${item}，趁天亮前赶到山口。`:`过路客阿灯带来一段山间传闻，想用${item}换个歇脚的地方。`,wanderer:order.variant?`一位斗笠侠客只留下一句：备好${item}，我会告诉你花印的来处。`:`灰猫侠客把半枚花印放在桌上，点名要${item}，却不肯说姓名。`})[key];
   }
   function renderOrders(){
-    const orders=allOrders(),active=orders.find(o=>o.id===state.activeOrder),featured=active||orders[0],item=CHAINS[featured.chain].items[featured.level-1],slot=available(featured.chain,featured.level);
+    const orders=allOrders(),active=orders.find(o=>o.id===state.activeOrder),featured=active||(state.storyRead>=5&&state.specialDone.wanderer<1?orders.find(o=>o.id==='p:wanderer'):null)||orders[0],item=CHAINS[featured.chain].items[featured.level-1],slot=available(featured.chain,featured.level);
     const card=$('active-order');card.replaceChildren();
     const visitor=document.createElement('div');visitor.className='commission-visitor';
     const portrait=document.createElement('img');portrait.src=PORTRAITS[visitorFor(featured)];portrait.alt=featured.label+'的立绘';
@@ -176,10 +179,11 @@
     const firstScenes=Math.min(4,state.storyRead),secondScenes=Math.max(0,Math.min(2,state.storyRead-4)),chapterTwo=state.storyRead>=5,prompt=nextScene();
     const title=chapterTwo?'第二章 · 花印山路':state.storyRead>=4?'第二章已解锁 · 花印山路':'目标：解锁第二章 · 花印山路';
     const detail=chapterTwo?`第二章剧情 ${secondScenes}/2 幕 · 无名侠客委托 ${state.specialDone.wanderer>=1?'已完成':'待完成'}`:`关键委托 ${keyCount}/3 · 第一章剧情 ${firstScenes}/4 幕`;
-    const next=prompt?`新剧情《${prompt.title}》已解锁，点击下方进入`:chapterTwo?state.specialDone.wanderer<1?'下一步：接下无名侠客的专属委托':'第二章第一幕已读，后续故事待续':state.specialDone.liuliu<1?'先完成六六的专属委托':state.specialDone.xingren<1?'下一步：完成杏仁的专属委托':state.specialDone.baomei<1?'下一步：完成宝妹的专属委托':'阅读第一章待解锁剧情并作出选择';
+    const next=prompt?`新剧情《${prompt.title}》已解锁，点击下方进入`:chapterTwo?state.specialDone.wanderer<1?(state.activeOrder==='p:wanderer'?'无名侠客委托进行中 · 合成新茶并交付':'下一步：点击下方接取无名侠客的专属委托'):'第二章第一幕已读，后续故事待续':state.specialDone.liuliu<1?'先完成六六的专属委托':state.specialDone.xingren<1?'下一步：完成杏仁的专属委托':state.specialDone.baomei<1?'下一步：完成宝妹的专属委托':'阅读第一章待解锁剧情并作出选择';
     for(const prefix of ['chapter','journal']){$(prefix+'-goal').textContent=title;$(prefix+'-requirement').textContent=detail;$(prefix+'-fill').style.width=(chapterTwo?secondScenes/2:keyCount/3)*100+'%';$(prefix+'-status').textContent=next;}
     $('chapter-bar').setAttribute('aria-valuemax',chapterTwo?'2':'3');$('chapter-bar').setAttribute('aria-valuenow',String(chapterTwo?secondScenes:keyCount));$('chapter-bar').setAttribute('aria-label',chapterTwo?'第二章剧情进度':'第二章解锁关键委托进度');
     const entry=$('chapter-entry');entry.hidden=!(prompt&&state.storyRead>=4);entry.textContent=state.storyRead===4?'进入第二章 · 花印山路':'阅读第二章新剧情';
+    for(const id of ['quest-entry','journal-quest-entry']){const button=$(id);button.hidden=!(chapterTwo&&state.specialDone.wanderer<1&&state.activeOrder!=='p:wanderer');button.textContent=state.activeOrder?'改接无名侠客委托':'接取无名侠客委托';}
     $('chapter-mark').textContent=chapterTwo?'第二章':'第一章';$('brand-chapter').textContent=chapterTwo?'喵来客栈 · 第二章':'喵来客栈 · 第一章';$('chapter-name').textContent=chapterTwo?'花印山路':'一封送错的信';$('journal-title').textContent=chapterTwo?'花印山路':'一封送错的信';$('journal-subtitle').textContent=chapterTwo?'完成侠客委托，追寻花印的来历。':'完成委托，解锁每一幕的画面与故事。';
   }
   function nextScene(){return SCENES[state.storyRead]&&SCENES[state.storyRead].need(state)?SCENES[state.storyRead]:null;}
@@ -217,6 +221,7 @@
     document.querySelectorAll('.generator').forEach(b=>{b.disabled=step!=='done'&&!(b.dataset.chain==='food'&&['generate1','generate2'].includes(step));b.classList.toggle('tutorial-target',!b.disabled&&step!=='done');});
   }
   $('chapter-entry').onclick=()=>readScene();
+  for(const id of ['quest-entry','journal-quest-entry'])$(id).onclick=()=>{const order=allOrders().find(o=>o.id==='p:wanderer');if(!order||state.specialDone.wanderer>=1)return;showTab('board');accept(order);$('active-order').scrollIntoView({behavior:'smooth',block:'start'});};
   $('intro-next').onclick=()=>{const n=Number(state.onboarding.slice(5));if(!state.onboarding.startsWith('story'))return;state.onboarding=n<2?'story'+(n+1):'accept';if(n===2)state.storyRead=Math.max(1,state.storyRead);save();showTab('board');render();};
   $('generators').replaceChildren();Object.entries(CHAINS).forEach(([key,chain])=>{const btn=document.createElement('button');btn.className='generator';btn.innerHTML='<b></b><small>消耗 1 体力</small>';btn.prepend(itemImage(key,1));btn.querySelector('b').textContent=chain.generator;btn.onclick=()=>generate(key);btn.dataset.chain=key;$('generators').append(btn);});
   $('board').addEventListener('click',e=>{const cell=e.target.closest('.cell');if(cell)cellClick(Number(cell.dataset.index));});
